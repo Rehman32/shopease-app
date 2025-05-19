@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "421408284826",
+    "project_id": "fitconnect-58633",
+    "storage_bucket": "fitconnect-58633.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421408284826:android:66e49892de979077cf3f23",
+        "android_client_info": {
+          "package_name": "com.yourname.fitconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6vMcdzY95WNwsXMl1chR-qBTyVymqZqg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
