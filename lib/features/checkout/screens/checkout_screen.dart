@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../cart/controllers/cart_controller.dart';
 import '../../cart/models/cart_item.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
@@ -43,18 +45,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       return;
     }
 
+    final userToken = await FirebaseMessaging.instance.getToken(); // 🔥 Get user's FCM token
+
     final order = {
       'userId': user.uid,
+      'userToken': userToken, // ✅ Save token
       'items': cart.map((CartItem item) => {
         'id': item.product.id,
         'title': item.product.title,
         'price': item.product.price,
         'quantity': item.quantity,
         'image': item.product.image,
-        // ❌ REMOVE 'status' from here
       }).toList(),
       'total': total,
-      'status': 'pending', // ✅ ADD HERE
+      'status': 'pending',
       'createdAt': Timestamp.now(),
       'deliveryInfo': {
         'name': _nameController.text,
@@ -62,6 +66,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         'phone': _phoneController.text,
       }
     };
+
 
 
     try {

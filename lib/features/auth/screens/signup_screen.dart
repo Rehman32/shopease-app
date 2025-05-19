@@ -1,5 +1,7 @@
+//signup_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import '../controller/auth_controller.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
@@ -11,8 +13,15 @@ class SignupScreen extends ConsumerStatefulWidget {
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController(); // Controller for the name field
   String _email = '';
   String _password = '';
+
+  @override
+  void dispose() {
+    _nameController.dispose(); // Clean up the controller
+    super.dispose();
+  }
 
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
@@ -24,6 +33,12 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         .signUp(_email, _password);
 
     if (user != null) {
+      // 🔥 Auto-create User Doc on Sign Up
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'email': user.email,
+        'isAdmin': false, // 🔁 Set true manually for admin users
+        'name': _nameController.text,
+      });
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -49,6 +64,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        prefixIcon: Icon(Icons.person),
+                        border: OutlineInputBorder(),
+                      ),
+                      onSaved: (value) => _nameController.text = value!,
+                      validator: (value) =>
+                      value!.isNotEmpty ? null : 'Enter your name',
+                    ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'Email',

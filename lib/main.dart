@@ -8,6 +8,17 @@ import 'features/cart/screens/cart_screen.dart';
 import 'features/catalog/screen/catalog_screen.dart';
 import 'features/catalog/screen/home_screen.dart';
 import 'features/checkout/screens/checkout_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// ignore_for_file: avoid_print
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  // Handle background message
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +30,24 @@ void main() async {
         projectId: "fitconnect-58633",
       )
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  // Android Notification Channel setup
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission();
+
+  String? token = await messaging.getToken();
+  print('FCM Token: $token');
   runApp(
     const ProviderScope(
         child: ShopEaseApp()
