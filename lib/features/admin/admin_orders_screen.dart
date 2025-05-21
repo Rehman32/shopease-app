@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'admin_order_details_screen.dart';
+
 class AdminOrdersScreen extends StatelessWidget {
   const AdminOrdersScreen({super.key});
 
@@ -56,6 +58,14 @@ class AdminOrdersScreen extends StatelessWidget {
                   return Card(
                     margin: const EdgeInsets.all(8),
                     child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AdminOrderDetailsScreen(order: order),
+                          ),
+                        );
+                      },
                       title: Text("Name: ${delivery['name']}"),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

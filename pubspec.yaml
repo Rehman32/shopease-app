@@ -44,9 +44,8 @@ dependencies:
   # Networking & Caching
   http: ^1.2.1
   cached_network_image: ^3.3.1
-
-  # Notifications
-  flutter_local_notifications: ^17.1.2
+  image_picker: ^1.1.0
+  intl: ^0.18.0  # or the latest version
 
 
 

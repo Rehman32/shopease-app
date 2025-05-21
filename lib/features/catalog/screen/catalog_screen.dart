@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controller/product_controller.dart';
 import '../controller/filter_controller.dart';
-import '../model/product_model.dart';
 import '../widgets/product_tile.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/filter_drawer.dart';
-import '../../cart/controllers/cart_controller.dart'; // Import your cart controller
 
 class CatalogScreen extends ConsumerWidget {
   const CatalogScreen({super.key});
@@ -14,17 +12,20 @@ class CatalogScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filteredProducts = ref.watch(filteredProductsProvider);
+    final isLoading = ref.watch(productControllerProvider).isLoading;
 
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Shop Products'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(productControllerProvider.notifier).loadProducts(),
+            tooltip: 'Refresh Products',
           )
         ],
       ),
-      drawer: const FilterDrawer(),
+      drawer: const FilterDrawer(), // Keeping the filter drawer
       body: Column(
         children: [
           Padding(
@@ -32,7 +33,9 @@ class CatalogScreen extends ConsumerWidget {
             child: SearchBarWidget(),
           ),
           Expanded(
-            child: RefreshIndicator(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
               onRefresh: () async {
                 await ref.read(productControllerProvider.notifier).loadProducts();
               },
@@ -56,7 +59,14 @@ class CatalogScreen extends ConsumerWidget {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+        backgroundColor: Colors.teal,
+        child: const Icon(Icons.filter_list),
+        tooltip: 'Filter Products',
+      ),
     );
   }
 }
-
